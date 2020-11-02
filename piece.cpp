@@ -17,6 +17,8 @@ Piece::Piece( char t, char c ) {
 
 // Private
 bool Piece::inPathOfEnemy(int row, int col, vector<vector<Piece>> board) {
+    // Determine if specified piece is in the next-turn path of any enemy piece
+
     string squareToCheck = to_string(row) + to_string(col);
 
     char enemyColor;
@@ -27,22 +29,31 @@ bool Piece::inPathOfEnemy(int row, int col, vector<vector<Piece>> board) {
 
     for (unsigned int iter1 = 0; iter1 < board.size(); iter1++) {
         for (unsigned int iter2 = 0; iter2 < board.at(iter1).size(); iter2++) {
+
             Piece curr = board.at(iter1).at(iter2);
+
             if (curr.getColor() == enemyColor && curr.getType() != 'K') {
+
                 vector<string> enemyMoves = curr.getMoves(iter1, iter2, board);
+
                 for (unsigned int moveIter = 0; moveIter < enemyMoves.size(); moveIter++) {
-                    if (enemyMoves.at(moveIter) == squareToCheck) {
+
+                    if (enemyMoves.at(moveIter) == squareToCheck)
                         return true;
-                    }
+
                 }
+
             }
+
         }
     }
+
     return false;
 }
 
 
 vector<string> Piece::getDiagonal(int row, int col, vector<vector<Piece>> board) {
+
     vector<string> moves;
     string move;
 
@@ -52,10 +63,12 @@ vector<string> Piece::getDiagonal(int row, int col, vector<vector<Piece>> board)
     else
         enemyColor = 'w';
 
+
     int col_id = 1;
     int iter = row - 1;
     bool obstacle1 = false;
     bool obstacle2 = false;
+
     while(iter >= 0) {
 
         if (col + col_id < 8) {
@@ -145,6 +158,7 @@ vector<string> Piece::getDiagonal(int row, int col, vector<vector<Piece>> board)
 
 
 vector<string> Piece::getSameLine(int row, int col, vector<vector<Piece>> board) {
+
     vector<string> moves;
     string move;
 
@@ -153,6 +167,7 @@ vector<string> Piece::getSameLine(int row, int col, vector<vector<Piece>> board)
         enemyColor = 'b';
     else
         enemyColor = 'w';
+
 
     for (int iter = row + 1; iter < 8; iter++) {
 
@@ -223,6 +238,7 @@ vector<string> Piece::getSameLine(int row, int col, vector<vector<Piece>> board)
 
 
 vector<string> Piece::getLShaped(int row, int col, vector<vector<Piece>> board) {
+
     vector<string> moves;
     string move;
 
@@ -295,7 +311,6 @@ vector<string> Piece::getLShaped(int row, int col, vector<vector<Piece>> board) 
 }
 
 
-// Check if piece in way
 vector<string> Piece::getKingMoves(int row, int col, vector<vector<Piece>> board) {
     vector<string> moves;
     string move;
@@ -304,13 +319,19 @@ vector<string> Piece::getKingMoves(int row, int col, vector<vector<Piece>> board
         if (row + iter1 >= 0 && row + iter1 < 8) {
             for(int iter2 = -1; iter2 < 2; iter2++) {
                 if (col + iter2 >= 0 && col + iter2 < 8) {
-                    if (iter1 != 0 or iter2 != 0) {
-                            if (!inPathOfEnemy(row + iter1, col + iter2, board)) {
-                                move += to_string(row + iter1);
-                                move += to_string(col + iter2);
-                                moves.push_back(move);
-                                move.clear();
-                            }
+                    if (!inPathOfEnemy(row + iter1, col + iter2, board)) {
+                        if (board.at(row + iter1).at(col + iter2).getColor() != color) {
+                            move += to_string(row + iter1);
+                            move += to_string(col + iter2);
+                            moves.push_back(move);
+                            move.clear();
+                        }
+
+                        // Prevent stalemate when king is surrounded by friendly pieces
+                        move += to_string(row);
+                        move += to_string(col);
+                        moves.push_back(move);
+                        move.clear();
                     }
                 }
             }
@@ -329,7 +350,7 @@ vector<string> Piece::getKingMoves(int row, int col, vector<vector<Piece>> board
             // Not in check or passing through check
             if (!inPathOfEnemy(row, col, board) && !inPathOfEnemy(row, col + 1, board)
             && !inPathOfEnemy(row, col + 2, board)) {
-        
+
                 move += to_string(row);
                 move += to_string(col + 2);
                 moves.push_back(move);
@@ -369,6 +390,7 @@ vector<string> Piece::getKingMoves(int row, int col, vector<vector<Piece>> board
 vector<string> Piece::getPawnMoves(int row, int col, vector<vector<Piece>> board) {
     vector<string> moves;
     string move;
+
     char enemyColor;
     if(color == 'w')
         enemyColor = 'b';
@@ -391,7 +413,7 @@ vector<string> Piece::getPawnMoves(int row, int col, vector<vector<Piece>> board
         }
     }
 
-    if (color == 'b' && row > 0 && board.at(row + 1).at(col).getColor() != color
+    if (color == 'b' && row < 8 && board.at(row + 1).at(col).getColor() != color
     && board.at(row + 1).at(col).getColor() != enemyColor) {
         move += to_string(row + 1);
         move += to_string(col);
@@ -440,7 +462,46 @@ vector<string> Piece::getPawnMoves(int row, int col, vector<vector<Piece>> board
         }
     }
 
-    // Add en passant
+    // En Passant
+    if ((color == 'w' && row == 3) || (color == 'b' && row == 4)) {
+        if (col > 0) {
+            
+            Piece toLeft = board.at(row).at(col - 1);
+
+            if (toLeft.getType() == 'p' && toLeft.getColor() == enemyColor &&
+            toLeft.getMoveCount() == 1) {
+
+                if (color == 'w')
+                    move += to_string(row - 1);
+                else
+                    move += to_string(row + 1);
+
+                move += to_string(col - 1);
+                moves.push_back(move);
+                move.clear();
+            }
+
+        }
+
+        if (col < 7) {
+            Piece toRight = board.at(row).at(col + 1);
+
+            if (toRight.getType() == 'p' && toRight.getColor() == enemyColor &&
+            toRight.getMoveCount() == 1) {
+
+                if (color == 'w')
+                    move += to_string(row - 1);
+                else
+                    move += to_string(row + 1);
+
+                move += to_string(col + 1);
+                moves.push_back(move);
+                move.clear();
+            }
+
+        }
+
+    }
 
     return moves;
 }

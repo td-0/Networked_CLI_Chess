@@ -1,5 +1,4 @@
-// TODO: Add En Passant
-// TODO Future: Add network functionality
+// TODO: Add network functionality
 
 #include <iostream>
 #include <string>
@@ -19,6 +18,11 @@ string promptMove( char currPlayer ) {
         cout << "Black's ";
     cout << "Move: ";
     cin >> moveFrom >> moveTo;
+
+    while (moveFrom.length() != 2 || moveTo.length() != 2) {
+        cout << endl << "Not a Valid Move. Please try again: ";
+        cin >> moveFrom >> moveTo;
+    }
 
     // Display Error for Attempted Off-Board Move
     char from_col_id = moveFrom.at(0);
@@ -41,9 +45,11 @@ string promptMove( char currPlayer ) {
 
 int main() {
 
+    // Starting Menu
+
     char menuSelection;
 
-    cout << "Welcome to Command Line Chess!" << endl;
+    cout << endl << "Welcome to Command Line Chess!" << endl;
 
     while (menuSelection != 'p') {
 
@@ -63,8 +69,10 @@ int main() {
         cin >> menuSelection;
     }
 
+
     // Create Initial Board and Set First Move as White
     Board play_board;
+
 
     // Game Loop
     for(;;) {
@@ -72,13 +80,19 @@ int main() {
         play_board.printBoard();
         cout << endl;
 
+
+        // Check for Stalemate
+        if (play_board.stalemate(play_board.getCurrPlayer())) {
+            cout << "Stalemate." << endl << endl;
+            exit(0);
+        }
+
+        // Check for check and checkmate
         if (play_board.getCurrPlayer() == 'w') {
-            if (play_board.stalemate('w')) {
-                cout << "Stalemate." << endl << endl;
-            }
 
             if (play_board.checkmate('w')) {
                 cout << "Checkmate! Black Wins." << endl << endl;
+                exit(0);
             }
 
             if (play_board.check('w')) {
@@ -89,30 +103,32 @@ int main() {
 
 
         if (play_board.getCurrPlayer() == 'b') {
-            if (play_board.stalemate('b')) {
-                cout << "Stalemate." << endl << endl;
-            }
-
-
 
             if (play_board.checkmate('b')) {
                 cout << "Checkmate! White Wins" << endl << endl;
+                exit(0);
             }
 
             if (play_board.check('b')) {
                 cout << "Black's King is in Check." << endl << endl;
             }
+
         }
 
+        // Prompt player move
         string move = promptMove(play_board.getCurrPlayer());
 
+        // See if player move is valid
         while ((move.length() != 4) || !play_board.checkMoveValid(move)) {
             cout << endl <<"Invalid Move: Please Enter Another" << endl << endl;
             move = promptMove(play_board.getCurrPlayer());
         }
+
+        // Play out move
         play_board.movePiece(move);
 
 
+        // Change current player for next turn
         if (play_board.getCurrPlayer() == 'w')
             play_board.setCurrPlayer('b');
         else

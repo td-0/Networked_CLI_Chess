@@ -35,7 +35,7 @@ public:
     bool checkMoveValid(string);
 
     void movePiece(string);
-    
+
 };
 
 #endif
