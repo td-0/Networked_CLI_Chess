@@ -287,9 +287,9 @@ void runOnlineClient() {
 
         cout << prompt;
 
-        if (prompt == "Your Move:\n" || prompt == "\nNot a Valid Move. Please try again:\n\n"
-        || prompt == "\nMove Not On Board. Please Enter Another Move:\n" || prompt == "\n\nMove Not On Board. Please Enter Another Move:\n") {
-            
+        if (prompt.find("Your Move:") != string::npos || prompt.find("Not a Valid Move. Please try again:") != string::npos
+        || prompt.find("Move Not On Board. Please Enter Another Move:") != string::npos) {
+
             // Send information if it's player's move
             string moveFrom, moveTo;
             cin >> moveFrom >> moveTo;
