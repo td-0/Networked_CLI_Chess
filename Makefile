@@ -2,7 +2,7 @@
 
 FLAGS   = -Wall -Wextra
 COMPILE = g++ -g ${FLAGS}
-MODULES = board piece
+MODULES = board piece network
 HEADERS = ${MODULES:=.h}
 SOURCE  = ${MODULES:=.cpp} main.cpp
 EXEC    = chess

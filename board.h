@@ -26,6 +26,8 @@ public:
 
     void printBoard();
 
+    vector<string> boardToVector();
+
     bool check(char);
 
     bool stalemate(char);

@@ -59,8 +59,7 @@ void Board::printBoard() {
     cout << "      a  b  c  d  e  f  g  h" << endl << endl << endl;
     for ( unsigned int iter1 = 0; iter1 < board_state.size(); iter1++ ) {
         cout << " " << 8 - iter1 << "    ";
-        for ( unsigned int iter2 = 0; iter2 < board_state[iter1].size();
-        iter2++ ) {
+        for ( unsigned int iter2 = 0; iter2 < board_state[iter1].size(); iter2++ ) {
             if ( board_state[iter1][iter2].getColor() == 'w' ) {
                 if ( board_state[iter1][iter2].getType() == 'K' )
                     cout << board_state[iter1][iter2].getType();
@@ -74,6 +73,41 @@ void Board::printBoard() {
         cout << "  " << 8 - iter1 << endl << endl;
     }
     cout << endl << "      a  b  c  d  e  f  g  h" << endl;
+
+}
+
+vector<string> Board::boardToVector() {
+
+    vector<string> board_vec;
+
+    board_vec.push_back("      a  b  c  d  e  f  g  h\n\n\n");
+    for ( unsigned int iter1 = 0; iter1 < board_state.size(); iter1++ ) {
+        board_vec.push_back(" ");
+        board_vec[iter1 + 1].append(to_string(8 - iter1));
+        board_vec[iter1 + 1].append("    ");
+        for ( unsigned int iter2 = 0; iter2 < board_state[iter1].size(); iter2++ ) {
+            if ( board_state[iter1][iter2].getColor() == 'w' ) {
+                if ( board_state[iter1][iter2].getType() == 'K' ) {
+                    board_vec[iter1 + 1] += board_state[iter1][iter2].getType();
+                    board_vec[iter1 + 1].append("  ");
+                }
+                else {
+                    board_vec[iter1 + 1] += char(board_state[iter1][iter2].getType() - 32);
+                    board_vec[iter1 + 1].append("  ");
+                }
+            }
+            else {
+                board_vec[iter1 + 1] += board_state[iter1][iter2].getType();
+                board_vec[iter1 + 1].append("  ");
+            }
+        }
+        board_vec[iter1 + 1].append("  ");
+        board_vec[iter1 + 1] += (char(8 - iter1) + '0');
+        board_vec[iter1 + 1].append("\n\n");
+    }
+    board_vec.push_back("\n      a  b  c  d  e  f  g  h\n");
+
+    return board_vec;
 
 }
 
