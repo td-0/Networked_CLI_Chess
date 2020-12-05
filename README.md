@@ -1,6 +1,6 @@
 # Online_CLI_Chess
 
-Online_CLI_Chess is a command line based chess game that supports local and remote two player games.
+Online_CLI_Chess is a command line based chess game for Linux machines that supports local and remote two player games.
 
 ## Compilation/Installation
 To install, simply clone or download the repo and use the **make** command. Then simply type **./chess** to begin.
