@@ -5,7 +5,7 @@ COMPILE = g++ -g ${FLAGS}
 MODULES = board piece network
 HEADERS = ${MODULES:=.h}
 SOURCE  = ${MODULES:=.cpp} main.cpp
-EXEC    = chess
+EXEC    = cli-chess
 OBJECTS = ${SOURCE:.cpp=.o}
 
 ${EXEC} : ${OBJECTS}
